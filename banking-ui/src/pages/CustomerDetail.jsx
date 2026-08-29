@@ -30,7 +30,7 @@ export default function CustomerDetail() {
   const navigate  = useNavigate();
   const customerId = parseInt(id, 10);
 
-  const { customer, loading, error }                      = useCustomer(customerId);
+  const { customer, loading, error, refetch }             = useCustomer(customerId);
   const { accounts, loading: accLoading }                 = useAccounts(customerId);
   const { beneficiaries, loading: benLoading }            = useBeneficiaries(customerId);
 
@@ -86,8 +86,8 @@ export default function CustomerDetail() {
       setSaving(true);
       setSaveError(null);
       await customerService.update(customerId, editForm);
-      // Reload the page to reflect updated data
-      window.location.reload();
+      setShowEdit(false);
+      refetch();
     } catch (err) {
       setSaveError(err.message);
     } finally {

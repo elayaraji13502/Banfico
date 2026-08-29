@@ -27,7 +27,7 @@ export default function TransactionHistory() {
   const accountId = parseInt(id, 10);
 
   const { transactions, loading, error, refetch } = useTransactions(accountId);
-  const { account, loading: accLoading }           = useAccount(accountId);
+  const { account, loading: accLoading, refetch: refetchAccount } = useAccount(accountId);
 
   // Transaction form
   const [showForm, setShowForm]       = useState(false);
@@ -71,8 +71,7 @@ export default function TransactionHistory() {
       );
       setForm({ amount: '', transactionType: 'CREDIT', description: '' });
       refetch();             // refresh transaction list
-      // Reload account balance display after short delay
-      setTimeout(() => window.location.reload(), 1500);
+      refetchAccount();      // refresh account balance
     } catch (err) {
       setSubmitError(err.message);
     } finally {

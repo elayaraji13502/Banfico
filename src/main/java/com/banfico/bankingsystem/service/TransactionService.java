@@ -77,8 +77,8 @@ public class TransactionService {
         log.debug("Posting {} of {} on accountId: {}",
                 dto.getTransactionType(), dto.getAmount(), accountId);
 
-        // Step 1 — fetch account
-        Account account = accountRepository.findById(accountId)
+        // Step 1 — fetch account with pessimistic write lock to prevent race conditions
+        Account account = accountRepository.findByIdForUpdate(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
 
         // Step 2 — only ACTIVE accounts can transact

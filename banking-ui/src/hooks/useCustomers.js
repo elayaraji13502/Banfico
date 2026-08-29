@@ -88,30 +88,23 @@ export function useCustomer(id) {
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
 
-  useEffect(() => {
+  const fetchCustomer = useCallback(async () => {
     if (!id) return;
-
-    let cancelled = false; // cleanup flag — prevents setState on unmounted component
-
-    const fetch = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await customerService.getById(id);
-        if (!cancelled) setCustomer(data);
-      } catch (err) {
-        if (!cancelled) setError(err.message);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    fetch();
-
-    // Cleanup: if the component unmounts before the request finishes,
-    // set cancelled = true so we don't update state on a dead component
-    return () => { cancelled = true; };
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await customerService.getById(id);
+      setCustomer(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  return { customer, loading, error };
+  useEffect(() => {
+    fetchCustomer();
+  }, [fetchCustomer]);
+
+  return { customer, loading, error, refetch: fetchCustomer };
 }
