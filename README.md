@@ -64,26 +64,32 @@ banfico/
 
 ## Getting Started
 
+### 1. Clone the Repository
+```bash
+git clone https://github.com/elayaraji13502/Banfico.git
+cd Banfico
+```
+
 ### Prerequisites
 * Java JDK 21+
 * PostgreSQL 14+
 * Node.js 18+
 
-### 1. Database Setup
+### 2. Database Setup
 Create a PostgreSQL database named `bankingdb`:
 ```sql
 CREATE DATABASE bankingdb;
 ```
 Update the database credentials in `banking-system/src/main/resources/application.properties` if necessary.
 
-### 2. Run the Backend
+### 3. Run the Backend
 From the `banking-system` directory, run:
 ```bash
 ./mvnw spring-boot:run
 ```
 The backend will start on `http://localhost:8080`.
 
-### 3. Run the Frontend
+### 4. Run the Frontend
 From the `banking-ui` directory, install dependencies and start the development server:
 ```bash
 npm install
