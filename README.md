@@ -4,6 +4,14 @@ An enterprise-grade mini banking platform featuring a Spring Boot REST API backe
 
 ---
 
+## Key Features
+
+* **Concurrency Control**: Implements pessimistic write locking (`PESSIMISTIC_WRITE`) on account balance updates to prevent race conditions and ensure data integrity during concurrent transactions.
+* **State Management**: Optimized React state updates with memoized refetching hooks, eliminating full page reloads and preserving application state.
+* **Standardized API Envelope**: Consistent JSON response envelope for all success and error responses, handled globally.
+
+---
+
 ## Tech Stack
 
 ### Backend
