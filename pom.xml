@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--
+	=====================================================================
+	PARENT - Spring Boot Starter Parent
+	=====================================================================
+	This is the most important part of the pom.xml for a Spring Boot app.
+
+	By inheriting from spring-boot-starter-parent:
+	  - You get pre-configured versions for hundreds of libraries
+	  - No need to specify versions for most Spring dependencies
+	  - Build plugins are pre-configured (compiler, jar packaging, etc.)
+	  - Java encoding is set to UTF-8 by default
+
+	Think of it as a "master settings file" that Spring Boot maintains.
+	Version 3.2.13 = Spring Boot 3.2.x (uses Spring Framework 6.x)
+	=====================================================================
+	-->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.3.4</version>
+		<relativePath/>
+	</parent>
+
+	<!--
+	=====================================================================
+	PROJECT COORDINATES
+	groupId    = your organisation's reverse domain (like a namespace)
+	artifactId = the name of this specific project/module
+	version    = SNAPSHOT means "still in development, not released yet"
+	name       = human-readable display name
+	=====================================================================
+	-->
+	<groupId>com.banfico</groupId>
+	<artifactId>banking-system</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>banfico-banking-system</name>
+	<description>Banfico Mini Banking System - Week 1</description>
+
+	<properties>
+		<!--
+		Sets the Java version for compilation.
+		Java 21 is the latest LTS (Long-Term Support) release.
+		LTS = Oracle/OpenJDK will support it with patches for years.
+		-->
+		<java.version>21</java.version>
+	</properties>
+
+	<dependencies>
+
+		<!--
+		=================================================================
+		SPRING BOOT STARTER WEB
+		=================================================================
+		Bundles everything needed to build a REST API:
+		  - Spring MVC (handles @RestController, @GetMapping, etc.)
+		  - Embedded Tomcat server (no separate install needed)
+		  - Jackson (converts Java objects ↔ JSON automatically)
+		  - spring-web, spring-webmvc core libraries
+
+		Without this, you can't write REST endpoints.
+		=================================================================
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!--
+		=================================================================
+		SPRING BOOT STARTER DATA JPA
+		=================================================================
+		Bundles everything needed to talk to a database with JPA:
+		  - Spring Data JPA (gives you JpaRepository with free CRUD)
+		  - Hibernate (the JPA implementation — turns @Entity to SQL)
+		  - Spring JDBC and transaction management
+		  - HikariCP connection pool (fast, production-grade)
+
+		This is what makes @Entity, @Repository, @Transactional work.
+		=================================================================
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!--
+		=================================================================
+		SPRING BOOT STARTER VALIDATION
+		=================================================================
+		Adds Bean Validation (JSR-380) support via Hibernate Validator.
+		Enables annotations like:
+		  @NotBlank, @NotNull, @Size, @Min, @Max, @Email, @Pattern
+
+		Used on DTO fields + @Valid in controller method parameters.
+		GlobalExceptionHandler catches MethodArgumentNotValidException
+		when validation fails.
+		=================================================================
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!--
+		=================================================================
+		POSTGRESQL DRIVER
+		=================================================================
+		The JDBC driver that allows Java to communicate with PostgreSQL.
+		scope=runtime means it's only needed at runtime (when the app
+		actually runs), NOT at compile time when writing code.
+		Spring Boot's DataSource reads the driver class name from
+		application.properties and loads this driver automatically.
+		=================================================================
+		-->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--
+		=================================================================
+		LOMBOK
+		=================================================================
+		A compile-time annotation processor that generates boilerplate:
+		  @Data              → getters + setters + toString + equals + hashCode
+		  @Builder           → builder pattern (MyClass.builder().field(x).build())
+		  @NoArgsConstructor → empty constructor
+		  @AllArgsConstructor → constructor with all fields
+		  @RequiredArgsConstructor → constructor for final fields (used for DI)
+		  @Slf4j             → private static final Logger log = ...
+
+		scope=provided means it's used only at compile time.
+		The generated code is baked into the .class files — Lombok
+		itself is NOT included in the final JAR.
+
+		In VS Code: install the "Lombok Annotations Support" extension.
+		=================================================================
+		-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+		=================================================================
+		SPRING BOOT STARTER TEST
+		=================================================================
+		Bundles everything needed for testing:
+		  - JUnit 5 (the testing framework — @Test, @BeforeEach, etc.)
+		  - Mockito (mock dependencies in unit tests)
+		  - Spring Test + MockMvc (test controllers without a real server)
+		  - AssertJ (fluent assertions — assertThat(x).isEqualTo(y))
+
+		scope=test means this is ONLY on the classpath during mvn test.
+		It is NOT included in the final JAR that runs in production.
+		=================================================================
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!--
+			=============================================================
+			SPRING BOOT MAVEN PLUGIN
+			=============================================================
+			Packages your application as an executable "fat JAR":
+			  - Bundles all dependencies inside one JAR file
+			  - Includes the embedded Tomcat server
+			  - Makes it runnable with: java -jar banking-system.jar
+
+			Without this, mvn package creates a thin JAR that won't run
+			because the dependencies are missing.
+			=============================================================
+			-->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<!--
+					Excludes Lombok from the final JAR — it's only
+					needed during compilation, not at runtime.
+					-->
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!--
+			=============================================================
+			MAVEN COMPILER PLUGIN
+			=============================================================
+			Tells Maven which Java version to compile source code with.
+			release=21 enforces both source AND target compatibility
+			(cleaner than setting source + target separately).
+			=============================================================
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>21</release>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
